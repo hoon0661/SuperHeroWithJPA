@@ -12,9 +12,17 @@ import hoon.hero.superherowithjpa.dao.SightingDao;
 import hoon.hero.superherowithjpa.models.Hero;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -34,4 +42,40 @@ public class HeroController {
         return heroDao.findAll();
     }
     
+    @GetMapping("/{id}")
+    public ResponseEntity<Hero> getHeroById(@PathVariable int id){
+        Hero result = heroDao.getOne(id);
+        if(result == null){
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(result);
+    }
+    
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Hero addHero(@RequestBody Hero hero){
+        return heroDao.save(hero);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity updateHero(@PathVariable int id, @RequestBody Hero hero){
+        ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
+        if(id != hero.getId()){
+            response = new ResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+            heroDao.save(hero);
+            response = new ResponseEntity(HttpStatus.NO_CONTENT);
+        }
+        return response;
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteHero(@PathVariable int id){
+        ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
+        if(heroDao.getOne(id) != null){
+            heroDao.deleteById(id);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }
+        return response;
+    }
 }
