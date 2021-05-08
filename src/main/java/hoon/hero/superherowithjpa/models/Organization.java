@@ -72,13 +72,13 @@ public class Organization {
         this.city = city;
     }
 
-//    public List<Hero> getHeroes() {
-//        return heroes;
-//    }
-//
-//    public void setHeroes(List<Hero> heroes) {
-//        this.heroes = heroes;
-//    }
+    public List<Hero> getHeroes() {
+        return heroes;
+    }
+
+    public void setHeroes(List<Hero> heroes) {
+        this.heroes = heroes;
+    }
 
     public String getEmail() {
         return email;
