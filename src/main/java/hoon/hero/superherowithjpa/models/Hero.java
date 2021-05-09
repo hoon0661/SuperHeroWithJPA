@@ -22,7 +22,6 @@ import javax.persistence.ManyToMany;
  * @author hoon0
  */
 @Entity
-@JsonIgnoreProperties({"organizations"})
 public class Hero {
     
     @GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -46,7 +46,7 @@ public class OrganizationController {
     
     @GetMapping("/{id}")
     public ResponseEntity<Organization> getOrganizationById(@PathVariable int id){
-        Organization result = organizationDao.getOne(id);
+        Organization result = organizationDao.findById(id).orElse(null);
         if(result == null){
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
