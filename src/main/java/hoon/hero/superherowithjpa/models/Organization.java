@@ -14,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -28,18 +30,23 @@ public class Organization {
     private int id;
     
     @Column(nullable = false)
+    @NotBlank
     private String name;
     
     @Column
+    @NotBlank
     private String description;
     
     @Column(nullable = false)
+    @NotBlank
     private String city;
     
     @Column(nullable = false)
+    @NotBlank
     private String email;
     
     @ManyToMany(mappedBy = "organizations")
+    @NotNull
     private List<Hero> heroes;
 
     public int getId() {

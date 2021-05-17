@@ -12,13 +12,19 @@ import hoon.hero.superherowithjpa.dao.SightingDao;
 import hoon.hero.superherowithjpa.models.Hero;
 import hoon.hero.superherowithjpa.models.Organization;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,34 +65,30 @@ public class HeroController {
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Hero addHero(@RequestBody Hero hero, HttpServletRequest request){
-        String[] organizationIds = request.getParameterValues("organizationIds");
-        List<Organization> organizations = new ArrayList<>();
-        if(organizationIds != null){        
-            for(String organizationId : organizationIds){
-                organizations.add(organizationDao.getOne(Integer.parseInt(organizationId)));
-            }
-            hero.setOrganizations(organizations);
-        }
+    public Hero addHero(@Valid @RequestBody Hero hero){
         return heroDao.save(hero);
     }
     
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Hero addHero(@RequestBody Hero hero, HttpServletRequest request){
+//        String[] organizationIds = request.getParameterValues("organizationIds");
+//        List<Organization> organizations = new ArrayList<>();
+//        if(organizationIds != null){        
+//            for(String organizationId : organizationIds){
+//                organizations.add(organizationDao.getOne(Integer.parseInt(organizationId)));
+//            }
+//            hero.setOrganizations(organizations);
+//        }
+//        return heroDao.save(hero);
+//    }
+    
     @PutMapping("/{id}")
-    public ResponseEntity updateHero(@PathVariable int id, @RequestBody Hero hero, HttpServletRequest request){
+    public ResponseEntity updateHero(@PathVariable int id, @Valid @RequestBody Hero hero){
         ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
         if(id != hero.getId()){
             response = new ResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY);
-        } else {
-            
-            String[] organizationIds = request.getParameterValues("organizationIds");
-            List<Organization> organizations = new ArrayList<>();
-            if(organizationIds != null){        
-                for(String organizationId : organizationIds){
-                    organizations.add(organizationDao.getOne(Integer.parseInt(organizationId)));
-                }
-                hero.setOrganizations(organizations);
-            }
-            
+        } else {          
             heroDao.save(hero);
             response = new ResponseEntity(HttpStatus.NO_CONTENT);
         }
@@ -96,11 +98,23 @@ public class HeroController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteHero(@PathVariable int id){
         ResponseEntity response = new ResponseEntity(HttpStatus.NOT_FOUND);
-        if(heroDao.getOne(id) != null){
+        if(heroDao.findById(id) != null){
             heroDao.deleteById(id);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
         return response;
     }
     
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+      MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 }

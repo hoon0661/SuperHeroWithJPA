@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -29,24 +31,30 @@ public class Hero {
     private int id;
     
     @Column(nullable = false)
+    @NotBlank
     private String name;
     
     @Column
+    @NotBlank
     private String description;
     
     @Column(nullable = false)
+    @NotBlank
     private String superpower;
     
     @Column(nullable = false)
+    @NotBlank
     private String herotype;
     
     @Column
+    @NotBlank
     private String imgurl;
     
     @ManyToMany
     @JoinTable(name = "hero_organization",
             joinColumns = {@JoinColumn(name = "heroid")},
             inverseJoinColumns = {@JoinColumn(name = "organizationid")})
+    @NotNull
     private List<Organization> organizations;
 
     public int getId() {

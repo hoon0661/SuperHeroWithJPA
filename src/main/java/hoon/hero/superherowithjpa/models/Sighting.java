@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -28,13 +30,16 @@ public class Sighting {
     
     @ManyToOne
     @JoinColumn(name = "locationid", nullable = false)
+    @NotNull
     private Location location;
     
     @ManyToOne
     @JoinColumn(name = "heroid", nullable = false)
+    @NotNull
     private Hero hero;
     
     @Column(nullable = false)
+    @NotNull
     private LocalDate date;
 
     public int getId() {
