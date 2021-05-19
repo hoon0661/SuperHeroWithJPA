@@ -18,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.URL;
 
 /**
  *
@@ -48,6 +49,7 @@ public class Hero {
     
     @Column
     @NotBlank
+    @URL
     private String imgurl;
     
     @ManyToMany
